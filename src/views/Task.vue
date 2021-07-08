@@ -1,8 +1,5 @@
 <template>
   <div class="task-view py-24 w-1/2">
-    <!-- <div class="min-h-full p-6 rounded-xl bg-white flex flex-col">
-      <p>{{ task }}</p>
-    </div> -->
     <div class="min-h-full p-6 rounded-xl bg-white flex flex-col">
       <div id="cover" class="h-32 rounded-xl bg-gray-200 relative">
         <img

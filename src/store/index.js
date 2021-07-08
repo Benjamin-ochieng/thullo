@@ -3,13 +3,13 @@ import { createStore } from 'vuex';
 import defaultBoard from '../defaultBoard';
 import { saveStatePlugin } from '../utils';
 
-const board = JSON.parse(localStorage.getItem('board')) || defaultBoard;
+// const board = JSON.parse(localStorage.getItem('board')) || defaultBoard;
 
 export default createStore({
   plugins: [saveStatePlugin],
   modules: {},
   state: {
-    board,
+    board: defaultBoard,
   },
   mutations: {
     ADD_TASK(state, { tasks, newTask }) {
@@ -18,11 +18,14 @@ export default createStore({
     SET_TASK(state, { task, target, value }) {
       // eslint-disable-next-line no-param-reassign
       task[target] = value;
-      // Vue.set(task, target, value);
     },
     MOVE_TASK(state, { fromTasks, sourceTaskIndex, toTasks, targetTaskIndex }) {
       const taskToMove = fromTasks.splice(sourceTaskIndex, 1)[0];
       toTasks.splice(targetTaskIndex, 0, taskToMove);
+    },
+    ADD_LIST(state, payload) {
+      const { lists } = state.board;
+      lists.push(payload);
     },
     MOVE_LIST(state, { sourceListIndex, targetListIndex }) {
       const { lists } = state.board;
@@ -39,6 +42,9 @@ export default createStore({
     },
     moveTask({ commit }, payload) {
       commit('MOVE_TASK', payload);
+    },
+    createList({ commit }, payload) {
+      commit('ADD_LIST', payload);
     },
     moveList({ commit }, payload) {
       commit('MOVE_LIST', payload);

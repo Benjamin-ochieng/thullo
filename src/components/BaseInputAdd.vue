@@ -1,11 +1,4 @@
 <template>
-  <!-- <button
-    class="flex justify-between items-center px-4 py-3 bg-blue-200 rounded-lg text-sm text-blue-500"
-    v-bind="$attrs"
-  >
-    <p class="">Add another card</p>
-    <base-icon iconId="plus" class="w-4 h-4 fill-current" />
-  </button> -->
   <div id="search" class="relative" v-bind="$attrs">
     <div class="px-3 absolute flex items-center inset-y-0 right-0 text-blue-500">
       <base-icon iconId="plus" class="w-4 h-4 fill-current" />

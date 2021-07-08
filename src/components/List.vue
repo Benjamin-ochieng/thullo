@@ -1,32 +1,35 @@
 <template>
-  <div
-    class="list w-80 px-6 flex-col"
-    @drop="drop($event, list.tasks, listIndex)"
-    @dragover.prevent
-    @dragenter.prevent
-    draggable="true"
-    @dragstart.self="pickupList($event, listIndex)"
-  >
-    <div class="list-title py-2 flex justify-between items-center">
-      <p class="text-sm font-medium">{{ list.name }}</p>
-      <base-icon iconId="ellipsis" class="w-4 h-4 text-gray-400 fill-current" />
-    </div>
-    <div class="flex h-screen py-1">
-      <div class="flex-col overflow-y-auto scroll">
-        <task-card
-          v-for="(task, index) in list.tasks"
-          :key="task.id"
-          :task="task"
-          :taskIndex="index"
-          :tasks="list.tasks"
-          :sourceListIndex="listIndex"
-        />
-        <base-input-add
-          class="w-full mt-4"
-          label="Add another task"
-          v-model="newTask.name"
-          @change="addTask(list.tasks)"
-        />
+  <div class="w-80">
+    <div
+      class="list w-80 px-6 flex-col"
+      draggable="true"
+      @dragstart.self="pickupList($event, listIndex)"
+      @dragover.prevent
+      @dragenter.prevent
+      @drop.stop="drop($event, list.tasks, listIndex)"
+    >
+      <div class="list-title py-2 flex justify-between items-center">
+        <p class="text-sm font-medium">{{ list.name }}</p>
+        <base-icon iconId="ellipsis" class="w-4 h-4 text-gray-400 fill-current" />
+      </div>
+      <div class="flex h-screen py-1">
+        <div class="flex-col overflow-y-auto scroll">
+          <task-card
+            v-for="(task, index) in list.tasks"
+            :key="task.id"
+            :board="board"
+            :task="task"
+            :taskIndex="index"
+            :tasks="list.tasks"
+            :sourceListIndex="listIndex"
+          />
+          <base-input-add
+            class="w-full mt-4"
+            label="Add new task"
+            v-model="newTask.name"
+            @change="addTask(list.tasks)"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -35,12 +38,9 @@
 <script>
 import TaskCard from '@/components/TaskCard.vue';
 import Cuid from 'cuid';
-import { mapState, mapActions } from 'vuex';
+import { mapActions } from 'vuex';
 
 export default {
-  components: {
-    TaskCard,
-  },
   props: {
     list: {
       type: Object,
@@ -50,6 +50,13 @@ export default {
       type: Number,
       required: true,
     },
+    board: {
+      type: Object,
+      required: true,
+    },
+  },
+  components: {
+    TaskCard,
   },
   data() {
     return {
@@ -57,7 +64,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(['createTask', 'moveTask', 'moveList']),
+    ...mapActions(['createTask', 'moveList', 'moveTask']),
     createFreshTask() {
       const id = Cuid();
       return {
@@ -65,18 +72,18 @@ export default {
         name: '',
       };
     },
+    addTask(tasks) {
+      this.createTask({ tasks, newTask: this.newTask });
+      this.newTask = this.createFreshTask();
+    },
     pickupList(e, listIndex) {
       e.dataTransfer.effectAllowd = 'move';
       e.dataTransfer.dropEffect = 'move';
       e.dataTransfer.setData('source-list-index', listIndex);
       e.dataTransfer.setData('type', 'list');
     },
-    addTask(tasks) {
-      this.createTask({ tasks, newTask: this.newTask });
-      this.newTask = this.createFreshTask();
-    },
+    // eslint-disable-next-line no-unused-vars
     drop(e, toTasks, targetListIndex) {
-      console.log('Drop list called!');
       const type = e.dataTransfer.getData('type');
       if (type === 'task') {
         this.dropTask(e, toTasks);
@@ -97,10 +104,7 @@ export default {
       });
     },
   },
-  computed: {
-    ...mapState(['board']),
-  },
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped></style>

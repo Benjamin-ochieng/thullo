@@ -7,6 +7,9 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
+      height: {
+        board: '640px',
+      },
       fontSize: {
         xxs: '.625rem',
       },

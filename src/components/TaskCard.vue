@@ -3,10 +3,10 @@
     class="task-card w-64 p-3 mt-4 bg-white rounded-xl flex flex-col"
     @click="showTask(task)"
     draggable="true"
-    @dragstart="pickupTask($event, taskIndex, sourceListIndex)"
-    @drop.stop="drop($event, tasks, taskIndex)"
+    @dragstart.self="pickupTask($event, taskIndex, sourceListIndex)"
     @dragover.prevent
     @dragenter.prevent
+    @drop.stop="drop($event, tasks, taskIndex)"
   >
     <div class="task-cover w-full h-32 my-3 rounded-xl relative" v-if="task.cover">
       <img
@@ -57,10 +57,14 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapActions } from 'vuex';
 
 export default {
   props: {
+    board: {
+      type: Object,
+      required: true,
+    },
     tasks: {
       type: Array,
     },
@@ -89,9 +93,7 @@ export default {
       e.dataTransfer.setData('source-list-index', sourceListIndex);
       e.dataTransfer.setData('type', 'task');
     },
-    // eslint-disable-next-line no-unused-vars
     drop(e, toTasks, targetTaskIndex) {
-      console.log('Drop task called!');
       const sourceListIndex = e.dataTransfer.getData('source-list-index');
       const fromTasks = this.board.lists[sourceListIndex].tasks;
       const sourceTaskIndex = e.dataTransfer.getData('source-task-index');
@@ -105,10 +107,7 @@ export default {
       });
     },
   },
-  computed: {
-    ...mapState(['board']),
-  },
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped></style>
